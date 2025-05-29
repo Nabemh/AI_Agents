@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
+from langchain.chains import LLMChain
 
 load_dotenv()
 
@@ -17,4 +18,8 @@ prompt = ChatPromptTemplate.from_template(
 )
 
 final_prompt = prompt.format(concept="Subnetting")
-print(final_prompt)
+
+chain = LLMChain(llm=llm, prompt=prompt)
+
+result = chain.run(concept = "Subnetting")
+print(result)
