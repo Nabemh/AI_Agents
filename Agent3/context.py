@@ -1,4 +1,5 @@
 import os
+import gradio as gr
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import LLMChain
@@ -33,8 +34,8 @@ prompt = ChatPromptTemplate.from_template(
 
 chain = LLMChain(llm=llm, prompt=prompt, memory=memory)
 
-response1 = chain.run(concept="Hello my name is Nabem")
-print(response1)
+def chat(message):
+    response = chain.run(message)
+    return response
 
-response2 = chain.run(concept="What is my name?")
-print(response2)
+gr.ChatInterface(chat).launch()
