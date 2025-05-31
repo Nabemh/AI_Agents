@@ -1,4 +1,5 @@
 import os
+import gradio as gr
 from dotenv import load_dotenv
 from datasets import load_dataset
 import pandas as pd
@@ -42,6 +43,15 @@ support_agent = initialize_agent(
     verbose=True
 )
 
-response = support_agent.run("How do I reset my password?")
-print(response)
+def chat(message, chat_history):
+    try:
+        response = support_agent.run(message)
+        chat_history.append((message, response))
+        return response
+    except Exception as e:
+        error_msg = f"Error: {str(e)}"
+        chat_history.append((message, error_msg))
+        return error_msg
 
+
+gr.ChatInterface(chat).launch()
