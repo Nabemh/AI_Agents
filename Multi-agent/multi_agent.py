@@ -17,4 +17,20 @@ llm = ChatGoogleGenerativeAI(
 dataset = load_dataset("MakTek/Customer_support_faqs_dataset", split="train")
 df = dataset.to_pandas()
 
+def search_knowledge_base(query):
+    return query
 
+support_tools = [
+    Tool(
+        name="FAQ Search",
+        func=search_knowledge_base,
+        description="Answers FAQs about products, policies, etc."
+    )
+]
+
+support_agent = initialize_agent(
+    tools=support_tools,
+    llm=llm,
+    agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+    verbose=True
+)
