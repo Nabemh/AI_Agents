@@ -4,6 +4,7 @@ from datasets import load_dataset
 import pandas as pd
 from langchain.agents import initialize_agent, AgentType, Tool
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.memory import ConversationBufferMemory
 
 load_dotenv()
 
@@ -37,6 +38,7 @@ support_agent = initialize_agent(
     tools=support_tools,
     llm=llm,
     agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,
+    memory=ConversationBufferMemory(memory_key="chat_history"),
     verbose=True
 )
 
