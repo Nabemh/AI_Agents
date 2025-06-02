@@ -9,6 +9,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain.document_loaders import PyPDFLoader
 
 load_dotenv()
 
@@ -33,6 +34,9 @@ vectorstore = FAISS.from_texts(texts, embeddings)
 #save/load for reuse
 vectorstore.save_local("faiss_index")
 loaded_store = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+
+loader = PyPDFLoader("policy.pdf")
+pages = loader.load_and_split
 
 def semantic_faq_search(query):
     #look for most similar FAQ
