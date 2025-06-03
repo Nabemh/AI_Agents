@@ -10,6 +10,8 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.prompts import ChatPromptTemplate
 
 load_dotenv()
 
@@ -37,6 +39,25 @@ loaded_store = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deser
 
 loader = PyPDFLoader("policy.pdf")
 pages = loader.load_and_split
+
+splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
+chunks = splitter.split_documents(pages)
+
+pdf_store = FAISS.from_documents(chunks, embeddings)
+
+def pdf_qa(query):
+    docs = pdf_store.similarity_search(query)
+    context = "\n".join([d.page_content for d in docs])
+
+    prompt = ChatPromptTemplate.from_template("""
+    Answer the question based only on this context:
+    {context}
+
+    Question: {question}
+    """)
+    chain = prompt | llm  # Pipe syntax (LangChain's LCEL)
+    return chain.invoke({"context": context, "question": query})
+
 
 def semantic_faq_search(query):
     #look for most similar FAQ
