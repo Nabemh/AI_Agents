@@ -38,7 +38,7 @@ vectorstore.save_local("faiss_index")
 loaded_store = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 
 loader = PyPDFLoader("policy.pdf")
-pages = loader.load_and_split
+pages = loader.load_and_split()
 
 splitter = RecursiveCharacterTextSplitter(chunk_size=1000)
 chunks = splitter.split_documents(pages)
