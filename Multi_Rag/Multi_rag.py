@@ -14,3 +14,9 @@ pdf_loader = PyPDFLoader("policy.pdf")
 web_loader = WebBaseLoader("")
 csv_loader = CSVLoader("")
 
+pdf_pages = pdf_loader.load()
+web_pages = web_loader.load()
+csv_doc = csv_loader.load()
+
+all_docs = pdf_pages + web_pages + csv_doc
+
