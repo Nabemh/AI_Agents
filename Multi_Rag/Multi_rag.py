@@ -6,6 +6,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 load_dotenv()
 
+api_key = os.getenv("GOOGLE_API_KEY")
+
 llm = ChatGoogleGenerativeAI(
     model="gemini",
     temperature=0.7
