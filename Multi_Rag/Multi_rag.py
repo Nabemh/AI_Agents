@@ -2,7 +2,8 @@ import os
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.document_loaders import PyPDFLoader, WebBaseLoader, CSVLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter  
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.prompts import ChatPromptTemplate
 
 load_dotenv()
 
@@ -32,3 +33,22 @@ splitter = RecursiveCharacterTextSplitter(
 )
 
 chunks = splitter.split_documents(all_docs)
+
+prompt = ChatPromptTemplate.from_template("""  
+Answer the question using ONLY these sources. Cite each source like [1], [2].  
+
+Sources:  
+{context}  
+
+Question: {question}  
+""")  
+
+rag_chain = prompt | llm  
+
+def ask(query, sources=None):  
+    docs = retrieve(query, sources)  
+    context = "\n\n".join(  
+        f"[{i+1}] {d.page_content} (Source: {d.metadata['source']})"  
+        for i, d in enumerate(docs)  
+    )  
+    return rag_chain.invoke({"context": context, "question": query})  
