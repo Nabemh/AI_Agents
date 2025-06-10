@@ -39,8 +39,17 @@ embeddings = ChatGoogleGenerativeAIEmbeddings(model="models/embedding-001")
 vectorstore = FAISS.from_documents(chunks, embeddings)
 vectorstore.save_local("multidoc_index")
 
-def retrieve ():
-    return
+def retrieve (query, sources=None):
+    """
+    Retrieve chunks optionally filtering by sources.
+    """
+    if sources:
+        filter = lambda doc: doc.metadata['source'] in sources
+    else:
+        filter = None
+
+    docs = vectorstore.similarity_search(query, k=5, filter=filter)
+    return docs
 
 prompt = ChatPromptTemplate.from_template("""
 Answer the question using ONLY these sources. Cite each source like [1], [2].
